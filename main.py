@@ -40,65 +40,81 @@ def printboard():
     return final
 
 def userinput(columnumber, player):
-    columnumber = columnumber - 1
-    if connect_list[0]["Row6"][columnumber] == "0":
-        connect_list[0]["Row6"][columnumber] = player
-    else: # Put in decending order, since that's how connect-4 is played
-        if connect_list[0]["Row5"][columnumber] == "0":
-            connect_list[0]["Row5"][columnumber] = player
-        elif connect_list[0]["Row4"][columnumber] == "0":
-            connect_list[0]["Row4"][columnumber] = player
-        elif connect_list[0]["Row3"][columnumber] == "0":
-            connect_list[0]["Row3"][columnumber] = player
-        elif connect_list[0]["Row2"][columnumber] == "0":
-            connect_list[0]["Row2"][columnumber] = player
-        elif connect_list[0]["Row1"][columnumber] == "0":
-            connect_list[0]["Row1"][columnumber] = player
-        else:
-            return False # Column is full!
+  columnumber = columnumber - 1
+  for row in range(6, 0, -1):
+      if connect_list[0][f"Row{row}"][columnumber] == "0":
+          connect_list[0][f"Row{row}"][columnumber] = player
+          return True  # Successfully placed the piece
+  return False # If we reach this point, it means the column is full
 
 def checkforwin():
     data = connect_list[0]
-    for row in connect_list[0]:
-        for col in range(7):
+    for row in range(6, 0, -1):
+        for col in range(6):
             #TODO
+            #print(printboard())
+            if data[f"Row{row}"][col] == "1": # PLAYER 1 WINS
+                if data[f"Row{row}"][col+1] == "1": #PLAYER 1 WINS HORIZONTALLY-RIGHT
+                    if data[f"Row{row}"][col+2] == "1":
+                        if data[f"Row{row}"][col+3] == "1":
+                            return True
+                if data[f"Row{row}"][col-1] == "1": #PLAYER 1 WINS HORIZONTALLY-LEFT
+                    if data[f"Row{row}"][col-2] == "1":
+                        if data[f"Row{row}"][col-3] == "1":
+                            return True
+                
+                if data[f"Row{row-1}"][col] == "1": #PLAYER 1 WINS VERTICALLY-UP (No need to go down)
+                    if data[f"Row{row-2}"][col] == "1":
+                        if data[f"Row{row-3}"][col] == "1":
+                            return True
 
-            if data[row][col] == "1": # PLAYER 1 WINS HORIZONTALLY
-                if data[row][col+1] == "1":
-                    if data[row][col+2] == "1":
-                        if data[row][col+3] == "1":
-                            print("Player 1 wins!!!")
-                            exit()
-                if data[row][col-1] == "1":
-                    if data[row][col-2] == "1":
-                        if data[row][col-3] == "1":
-                            print("Player 1 wins!!!")
-                            exit()
+                if data[f"Row{row-1}"][col+1] == "1": #PLAYER 1 WINS DIAGONAL-UP RIGHT
+                    if data[f"Row{row-2}"][col+2] == "1":
+                        if data[f"Row{row-3}"][col+3] == "1":
+                            return True
 
-            if data[row][col] == "2": # PLAYER 2 WINS HORIZONTALLY
-                if data[row][col+1] == "2":
-                    if data[row][col+2] == "2":
-                        if data[row][col+3] == "2":
-                            print("Player 2 wins!!!")
-                            exit()
-                if data[row][col-1] == "2":
-                    if data[row][col-2] == "2":
-                        if data[row][col-3] == "2":
-                            print("Player 2 wins!!!")
-                            exit()
+                if data[f"Row{row-1}"][col-1] == "1": #PLAYER 1 WINS DIAGONAL-UP LEFT
+                    if data[f"Row{row-2}"][col-2] == "1":
+                        if data[f"Row{row-3}"][col-3] == "1":
+                            return True
+
+            if data[f"Row{row}"][col] == "2": # PLAYER 2 WINS
+                if data[f"Row{row}"][col+1] == "2": #PLAYER 2 WINS HORIZONTALLY-RIGHT
+                    if data[f"Row{row}"][col+2] == "2":
+                        if data[f"Row{row}"][col+3] == "2":
+                            return True
+                if data[f"Row{row}"][col-1] == "2": #PLAYER 2 WINS HORIZONTALLY-LEFT
+                    if data[f"Row{row}"][col-2] == "2":
+                        if data[f"Row{row}"][col-3] == "2":
+                            return True
+                
+                if data[f"Row{row-1}"][col] == "2": #PLAYER 2 WINS VERTICALLY-UP
+                    if data[f"Row{row-2}"][col] == "2":
+                        if data[f"Row{row-3}"][col] == "2":
+                            return True
+
+                if data[f"Row{row-1}"][col+1] == "2": #PLAYER 2 WINS DIAGONAL-UP RIGHT
+                    if data[f"Row{row-2}"][col+2] == "2":
+                        if data[f"Row{row-3}"][col+3] == "2":
+                            return True
+
+                if data[f"Row{row-1}"][col-1] == "2": #PLAYER 2 WINS DIAGONAL-UP LEFT
+                    if data[f"Row{row-2}"][col-2] == "2":
+                        if data[f"Row{row-3}"][col-3] == "2":
+                            return True
 
     return
 
 def main():
     time.sleep(1)
-    print("What's your name, player 1? (Yellow)")
+    print("What's your name, player 1?")
     player1name = input(">> ")
     time.sleep(1)
-    print("\nWhat's your name, player 2? (Red)")
+    print("\nWhat's your name, player 2?")
     player2name = input(">> ")
     time.sleep(1)
     clear()
-
+  
     i = 0
     while True:
         print("What column would you like to place your piece in?")
@@ -125,9 +141,10 @@ def main():
             else:
                 print('Please enter a column number 1 through 7.\n')
 
-        #print("----------------------------------------------")
-
-        checkforwin()
+        if checkforwin() == True:
+            print("\n",printboard())
+            print(f"Player {player} wins!!!")
+            exit()
         clear()
         i += 1
 
